@@ -108,6 +108,17 @@ class CouloumbOperator():
         return np.array([(self.potential*phi).crop(self.prec) for phi in Phi])
 
 
+class ReactionOperator(CouloumbOperator):
+    def setup(self):
+        rho = self.Psi[0]**2
+        for i in range(1, len(self.Psi)):
+            rho += self.Psi[i]**2
+        rho.crop(self.prec)
+        self.potential = (4.0*np.pi)*self.poisson(rho).crop(self.prec)
+    
+    def __call__(self, Phi):
+        """Apply Couloumb operator onto an orbital vector Phi"""
+        return np.array([(self.potential*phi).crop(self.prec) for phi in Phi])
 
 class NuclearOperator():
     """
